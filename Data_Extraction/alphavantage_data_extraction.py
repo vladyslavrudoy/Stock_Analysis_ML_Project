@@ -3,6 +3,7 @@ import datetime
 import time
 import pytz
 import pandas as pd
+import os
 
 from pytz import timezone
 from datetime import datetime
@@ -12,7 +13,7 @@ from bs4 import BeautifulSoup
 from configparser import SafeConfigParser
 
 config = SafeConfigParser()
-config.read('config.ini')
+config.read(os.path.abspath('../Configuration/config.ini'))
 
 fmt = "%Y-%m-%d %H:%M:%S"
 now= datetime.now(timezone('UTC')).astimezone(timezone('US/Eastern')).strftime(fmt)
@@ -71,7 +72,7 @@ def get_alphavantage_data(symbol, db_name):
     con = database_connect(db_name)
     #cur = con.cursor()    
     result = r.json()
-    dataForAllDays = pd.DataFrame(data=result['Time Series (30min)']).transpose().head(13)
+    dataForAllDays = pd.DataFrame(data=result['Time Series (30min)']).transpose().head(13)[::-1]
     for index, row in dataForAllDays.iterrows():
         cur = con.cursor()
         stock.date_of_trade = index
